@@ -9,11 +9,13 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GymManagementSystem {
+
     //Attribute
     private List<GymEmployee> employees;
 
@@ -23,19 +25,23 @@ public class GymManagementSystem {
      return: -
      purpose: Constructor method, creates a GymManagementSystem object
     */
-    public GymManagementSystem(){
-    employees = new ArrayList<>();
+    public GymManagementSystem() {
+        employees = new ArrayList<>();
 
-}
+    }
+
+    public List<GymEmployee> getEmployees() {
+        return employees;
+    }
 
     /*
-          method: newEmployeeFromFile
-          parameters: path(String)
-          return: void
-          purpose: reads the contents of a file using the file path, breaks them into Employee id, name,
-          last name, job title, hourly wage, and date enrolled, and creates a new GymEmployee object to be added to the
-          employees list
-         */
+              method: newEmployeeFromFile
+              parameters: path(String)
+              return: void
+              purpose: reads the contents of a file using the file path, breaks them into Employee id, name,
+              last name, job title, hourly wage, and date enrolled, and creates a new GymEmployee object to be added to the
+              employees list
+             */
     public void newEmployeeFromFile(String path) {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line; //line
@@ -96,11 +102,11 @@ public class GymManagementSystem {
 
             employees.add(new GymEmployee(id, name, last_name, job_title, hourly_wage, date_enrolled));
             System.out.println("Employee has been added.");
-        }
-        catch (InvalidIDRangeException e) {
+        } catch (InputMismatchException e) {
+            System.out.println("Wrong character entered." + e.getMessage());
+        } catch (InvalidIDRangeException e) {
             System.out.println(e.getMessage());
-        }
-        catch (InvalidHourlyWageException e) {
+        } catch (InvalidHourlyWageException e) {
             System.out.println(e.getMessage());
         } catch (InvalidDateException e) {
             System.out.println(e.getMessage());
@@ -133,7 +139,7 @@ public class GymManagementSystem {
 
     public void displayEmployees() {
         if (employees.isEmpty()) {
-            System.out.println("\nCurrently there are no employees in the system");
+            System.out.println("\nCurrently there are no employees in the system\n");
         } else {
             System.out.println("Employees in the system:");
             for (GymEmployee e : employees) {
@@ -149,103 +155,33 @@ public class GymManagementSystem {
      purpose: updates the fields of an employee inside the employees list, using the id and prompting
      the user to change one field at a time
     */
-    public void updateRecord() {
-        Scanner scanner = new Scanner(System.in);
-        int id;
 
-        System.out.println("Please input the Id of the record you wish to update: ");
-        id = scanner.nextInt();
-        scanner.nextLine();  // Consume the leftover newline
+    public boolean updateRecord(int id, String newName, String newLastName, String newJobTitle, double newHourlyWageValue, String newDate) {
+        for (GymEmployee e : employees) {
+            if (e.getEmployee_id() == id) {
+                e.setEmployee_name(newName);
+                e.setEmployee_last_name(newLastName);
+                e.setJob_title(newJobTitle);
 
-        int choice;
-        do {
-            System.out.println("Make a selection: " +
-                    "\n 1. Name" +
-                    "\n 2. Last Name" +
-                    "\n 3. Job Title" +
-                    "\n 4. Hourly Wage" +
-                    "\n 5. Date Enrolled" +
-                    "\n 6. Stop");
-            System.out.println("Please input the number associated with the attribute you wish to update: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();  // Consume the leftover newline
+                // Validate and set hourly wage
+                if (newHourlyWageValue < 12.00 || newHourlyWageValue > 40.00) {
+                    System.out.println("Hourly wage must be between $12.00 and $40.00");
+                    return false;
+                }
+                e.setHourly_wage(newHourlyWageValue);
 
-            switch (choice) {
-                case 1:
-                    System.out.println("Please input the new name: ");
-                    String newName = scanner.nextLine();
-                    for (GymEmployee e : employees) {
-                        if (e.getEmployee_id() == id) {
-                            e.setEmployee_name(newName);
-                        }
-                    }
-                    break;
+                // Validate and set date
+                if (!newDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                    System.out.println("Invalid date format. Use YYYY-MM-DD.");
+                    return false;
+                }
+                e.setDate_enrolled(newDate);
 
-                case 2:
-                    System.out.println("Please input the new last name: ");
-                    String newLastName = scanner.nextLine();
-                    for (GymEmployee e : employees) {
-                        if (e.getEmployee_id() == id) {
-                            e.setEmployee_last_name(newLastName);
-                        }
-                    }
-                    break;
-
-                case 3:
-                    System.out.println("Please input the new job title: ");
-                    String newJobTitle = scanner.nextLine();
-                    for (GymEmployee e : employees) {
-                        if (e.getEmployee_id() == id) {
-                            e.setJob_title(newJobTitle);
-                        }
-                    }
-                    break;
-
-                case 4:
-                    try{
-                    System.out.println("Please input the new hourly wage: ");
-                    double newHourlyWage = scanner.nextDouble();
-                    scanner.nextLine();  // Consume the leftover newline
-                        if (newHourlyWage < 12.00 || newHourlyWage > 40.00) {
-                            throw new InvalidHourlyWageException("The Hourly Wage must be between $12.00 and $40.00");
-                        }
-                        for (GymEmployee e : employees) {
-                            if (e.getEmployee_id() == id) {
-                                e.setHourly_wage(newHourlyWage);
-                            }
-                        }
-                    }catch (InvalidHourlyWageException e){
-                        System.out.println(e.getMessage());
-                    }
-                    break;
-
-                case 5:
-                    try {
-                        System.out.println("Please input the new Date Enrolled: ");
-                        String newDateEnrolled = scanner.nextLine();
-                        // Validate the date input format
-                        if (!newDateEnrolled.matches("\\d{4}-\\d{2}-\\d{2}")) {
-                            throw new InvalidDateException("The date must be formatted as YYYY-MM-DD");
-                        }
-                        for (GymEmployee e : employees) {
-                            if (e.getEmployee_id() == id) {
-                                e.setDate_enrolled(newDateEnrolled);
-                            }
-                        }
-                    }catch (InvalidDateException e){
-                        System.out.println(e.getMessage());
-                    }
-                    break;
-
-                case 6:
-                    System.out.println("Exiting update process.");
-                    break;
-
-                default:
-                    System.out.println("Wrong choice. Try again.");
+                return true; // Successfully updated all fields
             }
+        }
 
-        } while (choice != 6);
+        return false; // Employee ID not found
     }
 
 
@@ -276,12 +212,13 @@ public class GymManagementSystem {
           purpose: displays the GMS menu
          */
     public void displayMenu() {
-        System.out.println( "\n1. Add employee from a file"+
-                "\n2. Add employee manually" +
-                "\n3. Remove employee using ID number"+
-                "\n4. Update Record"+
-                "\n5. Display average wage"+
-                "\n6. Exit"+
+        System.out.println("\n1. Display employees in the system"+
+                "\n2. Add employee from a file"+
+                "\n3. Add employee manually" +
+                "\n4. Remove employee using ID number"+
+                "\n5. Update Record"+
+                "\n6. Display average wage"+
+                "\n7. Exit"+
                 "\nEnter a number to start: ");
     }
 }
