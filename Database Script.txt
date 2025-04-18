@@ -1,0 +1,42 @@
+CREATE TABLE employees (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name VARCHAR(50),
+    Last_Name VARCHAR (50),
+    Job_Title VARCHAR (100),
+    Hourly_Wage DECIMAL(10,2),
+    Date_Enrolled VARCHAR(50)
+);
+
+CREATE TABLE signup (
+    SignupID INTEGER PRIMARY KEY AUTOINCREMENT,
+    FullName VARCHAR (100),
+    Username VARCHAR (50),
+    Password VARCHAR (50) 
+);
+
+
+
+insert into employees values("Sarah","Jones","Employee","13.54","2014-02-01");
+insert into employees values("Jon","Smith","Employee","13.54","2015-03-02");
+insert into employees values("Martin","Purin","Employee","14.54","2015-09-11");
+insert into employees values("Mine","Gonzalez","Employee","12.54","2013-10-02");
+insert into employees values("Jonny","Ernest","Employee","16.50","2020-01-22");
+insert into employees values("Martha","Montalvo","Employee","17.54","2023-02-10");
+insert into employees values("Joshua","Martinez","Employee","12.54","2024-01-15");
+insert into employees values("Donald","Delano","Employee","16.20","2021-12-16");
+insert into employees values("Arthur","Doyle","Employee","18.28","2022-05-18");
+insert into employees values("Agatha","Smith","Employee","14.54","2021-03-02");
+insert into employees values("Ursula","Marrero","Employee","19.54","2023-01-19");
+insert into employees values("Holly","Gomez","Employee","14.54","2014-10-02");
+insert into employees values("Owen","Junior","Trainer","20.50","2020-11-23");
+insert into employees values("Stephanie","Martinez","Trainer","20.50","2024-10-08");
+insert into employees values("George","Orwell","Trainer","20.50","2024-08-15");
+insert into employees values("Bella","Londina","Trainer","20.50","2023-12-01");
+insert into employees values("Carl","Hollister","Trainer","20.50","2021-07-17");
+insert into employees values("August","King","Manager","22.10","2020-10-10");
+insert into employees values("Katherine","Kurtis","Manager","25.50","2012-06-05");
+insert into employees values("Luther","Goldwin","Manager","22.50","2018-12-01");
+
+
+
+
